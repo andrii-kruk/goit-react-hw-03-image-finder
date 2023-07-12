@@ -10,6 +10,13 @@ import Button from './Button/Button';
 import { StyledContainer, StyledTitle } from './App.styled';
 import { getImages, PER_PAGE } from 'services/api';
 
+const STATUS = {
+  IDLE: 'idle',
+  PENDING: 'pending',
+  RESOLVED: 'resolved',
+  REJECTED: 'rejected',
+};
+
 class App extends Component {
   state = {
     search: '',
@@ -17,7 +24,7 @@ class App extends Component {
     totalPages: 1,
     images: [],
     modal: { isOpen: false, img: null },
-    status: 'idle',
+    status: STATUS.IDLE,
   };
 
   async componentDidUpdate(_, prevState) {
@@ -25,41 +32,42 @@ class App extends Component {
 
     if (prevState.images.length < images.length && page !== 1) {
       const scrollOptions = {
-        top: window.pageYOffset + window.innerHeight,
+        top: 630,
         behavior: 'smooth',
       };
-      window.scrollTo(scrollOptions);
+      window.scrollBy(scrollOptions);
     }
 
     if (prevState.search !== search && search !== '') {
       try {
-        this.setState({ status: 'pending' });
+        this.setState({ status: STATUS.PENDING });
 
         const { hits, totalHits } = await getImages(search, page);
         this.setState({
           images: hits,
           totalPages: Math.ceil(totalHits / PER_PAGE),
-          status: 'resolved',
+          status: STATUS.RESOLVED,
         });
       } catch (error) {
-        this.setState({ status: 'rejected' });
+        this.setState({ status: STATUS.REJECTED });
       }
       return;
     }
 
     if (prevState.page !== page && page !== 1) {
       try {
-        this.setState({ status: 'pending' });
+        this.setState({ status: STATUS.PENDING });
 
         const { hits } = await getImages(search, page);
         this.setState({
           images: [...prevState.images, ...hits],
-          status: 'resolved',
+          status: STATUS.RESOLVED,
         });
 
-        if (page === totalPages) return Notiflix.Notify.warning('That is all');
+        if (page === totalPages)
+          return Notiflix.Notify.warning('This is last page!');
       } catch (error) {
-        this.setState({ status: 'rejected' });
+        this.setState({ status: STATUS.REJECTED });
       }
     }
   }
@@ -105,13 +113,15 @@ class App extends Component {
       <StyledContainer>
         <Searchbar handleSubmit={this.handleSubmit} />
 
-        {status === 'idle' && <StyledTitle>Look for something...</StyledTitle>}
+        {status === STATUS.IDLE && (
+          <StyledTitle>Look for something...</StyledTitle>
+        )}
 
-        {status === 'pending' && <Loader />}
+        {status === STATUS.PENDING && <Loader />}
 
-        {status === 'rejected' ||
+        {status === STATUS.REJECTED ||
           (totalPages === 0 && (
-            <StyledTitle>Sorry! Something went wrong ...</StyledTitle>
+            <StyledTitle>Sorry! Something went wrong!</StyledTitle>
           ))}
 
         {images.length !== 0 && (

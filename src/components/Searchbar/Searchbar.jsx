@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import { BsSearch } from 'react-icons/bs';
+
 import {
   StyledButton,
   StyledForm,
   StyledHeader,
   StyledInput,
-  StyledLabel,
 } from './Searchbar.styled';
 
 class Searchbar extends Component {
@@ -15,25 +16,30 @@ class Searchbar extends Component {
   };
 
   onSubmit = e => {
+    const { value } = this.state;
     e.preventDefault();
 
-    this.props.handleSubmit(this.state.value);
+    this.props.handleSubmit(value);
     this.setState({ value: '' });
   };
 
   render() {
+    const { value } = this.state;
+
     return (
       <StyledHeader>
         <StyledForm onSubmit={this.onSubmit}>
           <StyledButton type="submit">
-            <StyledLabel></StyledLabel>
+            {/* <StyledLabel> */}
+            <BsSearch />
+            {/* </StyledLabel> */}
           </StyledButton>
 
           <StyledInput
             onChange={this.onChange}
             type="text"
             placeholder="Search images and photos"
-            value={this.state.value}
+            value={value}
           />
         </StyledForm>
       </StyledHeader>

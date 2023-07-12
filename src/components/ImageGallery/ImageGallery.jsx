@@ -5,12 +5,10 @@ import { StyledList } from './ImageGallery.styled';
 
 class ImageGallery extends Component {
   render() {
+    const { images, openModal } = this.props;
     return (
       <StyledList>
-        <ImageGalleryItem
-          images={this.props.images}
-          openModal={this.props.openModal}
-        />
+        <ImageGalleryItem images={images} openModal={openModal} />
       </StyledList>
     );
   }
