@@ -102,7 +102,10 @@ class App extends Component {
     const { page, totalPages } = this.state;
 
     if (page !== totalPages) {
-      this.setState(prevState => ({ page: prevState.page + 1 }));
+      this.setState(prevState => ({
+        page: prevState.page + 1,
+        status: STATUS.PENDING,
+      }));
     }
   };
 
